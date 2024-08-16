@@ -55,12 +55,34 @@
         .search-bar {
             width: 50%; /* Adjust the width as needed */
             margin: 0 auto; /* Center the search bar */
+            position: relative; /* Relative position for dropdown */
             text-align: center; /* Center the text inside the search bar */
         }
 
         .search-bar input {
             text-align: center; /* Center the placeholder and entered text */
             font-size: 16px; /* Increase font size for better readability */
+        }
+
+        .suggestion-dropdown {
+            position: absolute;
+            top: 100%; /* Position below the input */
+            left: 0;
+            width: 100%;
+            max-height: 200px; /* Limit height */
+            overflow-y: auto; /* Scroll if too many items */
+            background-color: #fff; /* Dropdown background */
+            border: 1px solid #ddd; /* Border around dropdown */
+            border-radius: 5px; /* Rounded corners */
+            z-index: 1000; /* Ensure dropdown appears on top */
+        }
+
+        .suggestion-dropdown .list-group-item {
+            cursor: pointer;
+        }
+
+        .suggestion-dropdown .list-group-item:hover {
+            background-color: #f8f9fa; /* Highlight on hover */
         }
     </style>
 </head>
@@ -76,8 +98,8 @@
             <h2 class="text-center">Search Employee</h2>
             <div class="search-bar">
                 <input type="text" id="searchInput" class="form-control" placeholder="name or enothi ID" onkeyup="searchEmployee()">
+                <ul id="employeeList" class="suggestion-dropdown list-group mt-2"></ul>
             </div>
-            <ul id="employeeList" class="list-group mt-2"></ul>
         </div>
     </div>
 
@@ -105,7 +127,6 @@
                             <th scope="col" class="text-center">Purpose</th>
                             <th scope="col" class="text-center">Description</th>
                             <th scope="col" class="text-center">Date</th>
-
                         </tr>
                     </thead>
                     <tbody id="employeeAwardTableBody">
@@ -246,7 +267,6 @@
                         <td>${award.purposeid}</td>
                         <td>${award.description}</td>
                         <td>${award.date}</td>
-
                     `;
                     tableBody.appendChild(row);
                 });
@@ -296,8 +316,6 @@
             // Save the PDF
             doc.save(`${selectedEmployeeName}.pdf`);
         }
-        
-         
     </script>
 </div>
 {% endblock content %}
