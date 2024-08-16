@@ -1,0 +1,244 @@
+{% extends "employees/home.html" %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Query</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+    <!-- Custom Styles -->
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #00bcd4; /* Light teal background */
+            color: #fff; /* Text color */
+        }
+        .btn-blue {
+            background-color: #005B7F !important; /* Blue button */
+            color: #fff; /* White text */
+        }
+        .user_card {
+            width: 550px;
+            margin: auto;
+            margin-top: 20px;
+            background: #f8f9fa; /* Light gray background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333; /* Text color */
+        }
+        #form-title {
+            background-color: #005B7F; /* Blue background for title */
+            color: #fff; /* White text color */
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .form-row label {
+            width: 180px;
+            text-align: right;
+            margin-right: 10px;
+            color: #000; /* Black label text color */
+        }
+        .form-row textarea,
+        .form-row input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333; /* Text color for inputs */
+            background-color: #fff; /* White background for inputs */
+        }
+        .login-btn {
+            width: 40%;
+            background: #005B7F; /* Blue button */
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+        .login-btn:focus {
+            box-shadow: none;
+            outline: none;
+        }
+        /* Custom styles for the "Remark" select */
+        #remark {
+            text-align: center; /* Center text */
+        }
+        /* Styles for the message */
+        .message {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+            <div class="col-lg-6">
+                <div class="user_card">
+                    <h3 id="form-title">Report Query</h3>
+                    <form action="{% url 'query' %}" method="post" class="form-container">
+                        {% csrf_token %}
+                        <div class="form-group">
+
+							<b>Select Designation</b> <br>
+							<input type="checkbox" id="gm" name="gm" value="General Manager" data-designation="1">
+							<label for="gm">General Manager</label><br>
+							<input type="checkbox" id="dgm" name="dgm" value="Deputy General Manager" data-designation="2">
+							<label for="dgm">Deputy General Manager</label><br>
+							<input type="checkbox" id="m" name="m" value="Manager" data-designation="3">
+							<label for="m">Manager</label><br>
+							<input type="checkbox" id="dm" name="dm" value="Deputy Manager" data-designation="4">
+							<label for="dm">Deputy Manager</label><br>
+							<input type="checkbox" id="am" name="am" value="Assistant Manager" data-designation="5">
+							<label for="am">Assistant Manager</label><br><br>
+		
+							</div>
+
+                        <div class="form-group">
+                            <label for="employee"><b>Employee Name:</b></label>
+                            <select name="employee" id="employee" class="form-control" required>
+                                <option value="">Select Employee</option>
+                                {% for emp in employeeData %}
+                                <option value="{{ emp.empid }}">[{{emp.enothi_id}}] - {{ emp.ename }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="evalBased"><b>Evaluated by:</b></label>
+                            <div>
+                                <input type="radio" id="secDept" name="evalBased" value="secDept" required>
+  					            <label for="secDept">Own Division</label><br>
+					            <input type="radio" id="other" name="evalBased" value="other">
+  					            <label for="other">Other Divisions</label><br>
+  					            <input type="radio" id="everyone" name="evalBased" value="everyone">
+  					            <label for="everyone">All Employees</label><br>  
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <input type="submit" class="btn btn-dark login-btn btn-blue" name="profile" value="Make Report">
+                            {% if messages %}
+                            <div class="message">
+                                {% for message in messages %}
+                                <p>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Your custom script -->
+    <script>
+	function updateEmployeeOptions() {
+		var selectedDesignations = [];
+		$('input[type=checkbox]:checked').each(function() {
+			var designation = $(this).data('designation');
+			selectedDesignations.push(designation);
+			//console.log(selectedDesignations)
+		});
+   
+		var csrftoken = getCookie('csrftoken');
+   
+		console.log(selectedDesignations)
+	   
+   
+		// AJAX call to fetch employees based on selectedDesignations
+		$.ajax({
+			// Replace with your endpoint to fetch employees
+			url: "{% url 'select-evaluatee' %}",
+			type: 'POST',
+			headers: {
+			'X-CSRFToken': csrftoken  // Include CSRF token in headers
+			},
+			data: {
+				'designations': selectedDesignations,
+				
+			},
+			traditional: true,
+			success: function(data) {
+				var options = '<option selected disabled>Select Employee</option>';
+				data.forEach(function(emp) {
+					options += '<option value="' + emp.empid + '">' + '[' + emp.empid + '] - ' + emp.ename + '</option>';
+				});
+				$('#employee').html(options);
+			},
+			error: function(xhr, status, error) {
+				console.error('Error fetching employees: ' + error);
+			}
+		});
+	}
+   
+	function getCookie(name) {
+	var cookieValue = null;
+	if (document.cookie && document.cookie !== '') {
+		var cookies = document.cookie.split(';');
+		for (var i = 0; i < cookies.length; i++) {
+			var cookie = cookies[i].trim();
+			// Does this cookie string begin with the name we want?
+			if (cookie.substring(0, name.length + 1) === (name + '=')) {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+   }
+   $('input[type=checkbox]').change(function() {
+	   updateEmployeeOptions();
+   });
+		
+   	document.getElementById('reportform').addEventListener('submit', function(event) {
+        if (!document.querySelector('input[name="evalBased"]:checked')) {
+            event.preventDefault(); // Prevent form submission
+            alert('Please select an option from "Evaluated by" section.'); // Optionally, display an alert
+        }
+		if (document.getElementById('employee').value === '') {
+            event.preventDefault(); // Prevent form submission
+            alert('Please select an Employee.'); // Optionally, display an alert
+        }
+    });
+    </script>
+</body>
+</html>
+
+{% endblock %}

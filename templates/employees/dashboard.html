@@ -1,0 +1,303 @@
+{% extends "employees/home.html" %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+
+    <style>
+        .dashboard-header {
+            background-color: #E6E6FA; /* Adjust color as needed */
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            color: #000;
+        }
+
+        .dashboard-header h1 {
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 5px; /* Adjust for smaller screens */
+            }
+
+            .col-md-12 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-bar {
+            width: 50%; /* Adjust the width as needed */
+            margin: 0 auto; /* Center the search bar */
+            text-align: center; /* Center the text inside the search bar */
+        }
+
+        .search-bar input {
+            text-align: center; /* Center the placeholder and entered text */
+            font-size: 16px; /* Increase font size for better readability */
+        }
+    </style>
+</head>
+
+<div class="container mt-1">
+    <div class="dashboard-header">
+        <h1 class="text-center mb-4">Dashboard</h1>
+    </div>
+
+    <!-- Search Employee -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h2 class="text-center">Search Employee</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="form-control" placeholder="name or enothi ID" onkeyup="searchEmployee()">
+            </div>
+            <ul id="employeeList" class="list-group mt-2"></ul>
+        </div>
+    </div>
+
+    <!-- Award distribution Pie Chart -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h2 class="text-center">Award Distribution</h2>
+            <div class="chart-container">
+                <canvas id="awardDistributionChart"></canvas>
+            </div>
+            <div id="selectedEmployeeInfo" class="text-center mt-3"></div>
+        </div>
+    </div>
+
+    <!-- Award Table -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h2 class="text-center">Award Table</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center">Evaluator</th>
+                            <th scope="col" class="text-center">Evaluatee</th>
+                            <th scope="col" class="text-center">Purpose</th>
+                            <th scope="col" class="text-center">Description</th>
+                            <th scope="col" class="text-center">Date</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="employeeAwardTableBody">
+                        <!-- Employee award data will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" onclick="saveAsPDF()">Save as PDF</button>
+    </div>
+    
+    <!-- Top Employees Section -->
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center mt-4">Employees with Most Awards</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Employee Name</th>
+                            <th>Employee ID</th>
+                            <th>Total Awards</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in top_employees %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ employee.employee_name }}</td>
+                                <td>{{ employee.employee_empid }}</td>
+                                <td>{{ employee.total_awards }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let employeeChart;  // To keep track of the employee chart instance
+        let selectedEmployeeName = ''; 
+        let selectedEmployeeDesignation = ''; 
+        let selectedEmployeeDivision = ''; 
+        function searchEmployee() {
+            const query = document.getElementById('searchInput').value;
+            if (query.length < 3) {
+                document.getElementById('employeeList').innerHTML = '';
+                return;
+            }
+            fetch(`api/search-employee/?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const employeeList = document.getElementById('employeeList');
+                employeeList.innerHTML = '';
+                data.employees.forEach(emp => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.innerHTML = `${emp.name} (${emp.enothi_id})`;
+                    listItem.onclick = () => fetchEmployeeAwards(emp.enothi_id, emp.name);
+                    selectedEmployeeName=emp.name;
+                    selectedEmployeeDesignation =emp.designation;
+                    selectedEmployeeDivision=emp.division;
+
+                    employeeList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error searching employee:', error));
+        }
+
+        function fetchEmployeeAwards(enothi_id, name) {
+            document.getElementById('searchInput').value = `[${enothi_id}] ${name}`;
+            document.getElementById('employeeList').innerHTML = '';
+
+            fetch(`api/award_pie/${enothi_id}/`)
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('awardDistributionChart').getContext('2d');
+                
+                if (employeeChart) {
+                    employeeChart.destroy();
+                }
+
+                employeeChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Own Department', 'Other Department'],
+                        datasets: [{
+                            data: [data.own_department, data.other_department],
+                            backgroundColor: ['#007bff', '#17a2b8']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 20,
+                                    padding: 15
+                                }
+                            },
+                            datalabels: {
+                                formatter: (value, context) => {
+                                    const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    const percentage = (value / total * 100).toFixed(2) + '%';
+                                    return percentage;
+                                },
+                                color: '#fff',
+                            }
+                        }
+                    }
+                });
+
+                const selectedEmployeeInfo = document.getElementById('selectedEmployeeInfo');
+                selectedEmployeeInfo.innerHTML = `<p>Selected Employee: ${name} (${enothi_id})</p>`;
+
+                fetchEmployeeAwardTable(enothi_id);
+            })
+            .catch(error => console.error('Error fetching employee awards distribution:', error));
+        }
+
+        function fetchEmployeeAwardTable(enothi_id) {
+            fetch(`api/employee-awards/${enothi_id}/`)
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('employeeAwardTableBody');
+                tableBody.innerHTML = '';
+                data.awards.forEach(award => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${award.evaluator_name}</td>
+                        <td>${award.evaluatee_name}</td>
+                        <td>${award.purposeid}</td>
+                        <td>${award.description}</td>
+                        <td>${award.date}</td>
+
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching employee award data:', error));
+        }
+
+        function saveAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(18);
+            doc.text('Bangladesh Oil, Gas and Mineral Corporation', 40, 10);
+            doc.setFontSize(15);
+            doc.text('Smart Employee Evaluation', 70, 18);
+            doc.setFontSize(12);
+            doc.text("Reward Report", 80, 26);
+        
+            doc.setFontSize(10);
+            doc.text(`Name: ${selectedEmployeeName}`, 70, 40);
+            doc.text(`Designation: ${selectedEmployeeDesignation}`, 70, 50);
+            doc.text(`Division: ${selectedEmployeeDivision}`, 70, 60);
+        
+            // Add the Award Table
+            doc.autoTable({
+                html: '.table-responsive table',
+                startY: 70, // Position the table after the employee info
+                styles: {
+                    fontSize: 10,
+                },
+                headStyles: {
+                    fillColor: [0, 123, 255],
+                    textColor: [255, 255, 255],
+                },
+                margin: { top: 20 },
+            });
+        
+            // Add Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.text(`Generated by IT Department, Petrobangla`, 10, 280);
+                doc.text(`Page ${i} of ${pageCount}`, 200, doc.internal.pageSize.height - 30, { align: 'right' });
+            }
+        
+            // Save the PDF
+            doc.save(`${selectedEmployeeName}.pdf`);
+        }
+        
+         
+    </script>
+</div>
+{% endblock content %}

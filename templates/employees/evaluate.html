@@ -1,0 +1,206 @@
+{% extends "employees/home.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+    <!-- Custom Styles -->
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #00bcd4;
+            color: #333; /* Text color */
+        }
+        .btn-red {
+            background-color: #005B7F; /* Blue background color */
+            color: #ffffff; /* White text color */
+            border: none; /* Remove default border */
+            padding: 10px 15px; /* Match padding with other buttons */
+            border-radius: 5px; /* Round corners */
+            width: 100%; /* Full-width button to match other buttons */
+            transition: none; /* Disable transition effects */
+        }
+        .btn-red:hover {
+            background-color: #1565c0 !important; /* Darker blue on hover */
+        }
+        .user_card {
+            width: 550px;
+            margin: auto;
+            margin-top: 0;
+            background: #f8f9fa; /* Light gray background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #form-title {
+            background-color: #005B7F; /* Blue background for title */
+            color: #fff; /* White text color */
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .form-row label {
+            width: 180px;
+            text-align: right;
+            margin-right: 10px;
+            color: #000; /* Black label text color */
+        }
+        .form-row textarea,
+        .form-row input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333; /* Text color for inputs */
+            background-color: #fff; /* White background for inputs */
+        }
+        #seek {
+            height: 60px; /* Adjust height as needed */
+            resize: none; /* Disable resizing */
+            text-align: center; /* Center text */
+        }
+        .message {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+            color: red;
+            font-weight: bold;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            color: #333;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #employeeList {
+            list-style-type: none;
+            padding: 0;
+        }
+        .list-group-item {
+            cursor: pointer;
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .list-group-item:hover {
+            background-color: #e9ecef;
+            color: #005B7F;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+            <div class="col-lg-6">
+                <div class="user_card">
+                    <h3 id="form-title">Evaluate Here</h3>
+                    <form action="" method="post" class="form-container" id="evaluationForm">
+                        {% csrf_token %}
+                        <div class="profile-item">
+                            <b>Name:</b> {{evaluateeData.ename}}
+                        </div>
+                        <div class="profile-item">
+                            <b>Designation:</b> {{designation_name}}
+                        </div>
+                        <div class="profile-item">
+                            <b>Division:</b> {{division_name}}
+                        </div>
+                        <input id="evaluateeid" name="evaluateeid" type="hidden" value="{{evaluateeData.empid}}">
+
+                        <ol>
+                            <li>
+                                Same Division: <br>
+                                <label for="secDept">Observation:</label>
+                                <select name="secDept" id="secDept" required>
+                                    <option selected disabled>Select Remark..</option>
+                                    <option value="1">Excellent</option>
+                                    <option value="2">Very Good</option>
+                                    <option value="3">Good</option>
+                                    <option value="4">Average</option>
+                                </select>
+                            </li>
+                            <li>
+                                Committee Work: <br>
+                                <label for="record">Record Number:</label>
+                                <input type="text" id="record" name="record"><br>
+                                <label for="purpose">Committee Purpose:</label>
+                                <input type="text" id="purpose" name="purpose"><br>
+                                <label for="committee">Observation:</label>
+                                <select name="committee" id="committee" required>
+                                    <option selected disabled>Select Remark..</option>
+                                    <option value="1">Excellent</option>
+                                    <option value="2">Very Good</option>
+                                    <option value="3">Good</option>
+                                    <option value="4">Average</option>
+                                </select>
+                            </li>
+                            <li>
+                                Overall Behaviour: <br>
+                                <label for="behaviour">Observation:</label>
+                                <select name="behaviour" id="behaviour" required>
+                                    <option selected disabled>Select Remark..</option>
+                                    <option value="1">Excellent</option>
+                                    <option value="2">Very Good</option>
+                                    <option value="3">Good</option>
+                                    <option value="4">Average</option>
+                                </select>
+                            </li>
+                        </ol>
+
+                        <div class="form-group">
+                            
+                            <input class="btn btn-red" type="submit" name="profile" value="Save">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#evaluationForm').submit(function(e) {
+                var behaviourValue = $('#behaviour').val();
+                if (behaviourValue === null || behaviourValue === "") {
+                    alert("Please select an option for Overall Behaviour.");
+                    e.preventDefault(); // Prevent form submission
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+{% endblock %}

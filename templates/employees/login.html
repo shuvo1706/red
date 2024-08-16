@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #f0f4f8; /* Light background color for contrast */
+        }
+        .user_card {
+            width: 30%;
+            margin-top: 5%;
+            margin-bottom: auto;
+            background: #ffffff;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .app_card {
+            text-align: center;
+            width: 80%;
+            margin-top: auto;
+            margin-bottom: auto;
+            background: #005B7F; /* Blue background */
+            color: white;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .form_container {
+            margin-top: 20px;
+        }
+        #form-title {
+            color: #fa0c2d; /* Red color for the title */
+        }
+        .login_btn {
+            width: 100%;
+            background: #fa0c2d !important; /* Red background */
+            color: white !important;
+        }
+        .login_btn:focus {
+            box-shadow: none !important;
+            outline: 0px !important;
+        }
+        .login_container {
+            padding: 0 2rem;
+        }
+        .input-group-text {
+            background: #005B7F !important; /* Blue background for input icons */
+            color: white !important;
+            border: 0 !important;
+            border-radius: 0.25rem 0 0 0.25rem !important;
+        }
+        .input_user,
+        .input_pass:focus {
+            box-shadow: none !important;
+            outline: 0px !important;
+        }
+        #messages {
+            background-color: #f8d7da; /* Light red background for error messages */
+            color: #721c24; /* Dark red color for text */
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+        div.c {
+            position: absolute;
+            margin-top: 150px;
+            left: 1350px;
+            width: 200px;
+            height: 120px;
+        }     
+        div.b {
+            position: absolute;
+            margin-top: 140px;
+            left: 400px;
+            width: 200px;
+            height: 120px;
+        } 
+    </style>
+</head>
+<body>
+
+    <br>
+    <div class="d-flex justify-content-center">
+        <img src="{% static 'pblogo.png' %}" alt="homepage" width="70" height="70"/>
+    </div><br>
+    <div class="container h-5">
+        <div class="d-flex justify-content-center h-5">
+            <div class="app_card">
+                <h1 id="app-name">Smart Employee Evaluation</h1>
+                <h1 id="org-name">Bangladesh Oil, Gas and Mineral Corporation (Petrobangla)</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container h-95">
+        <div class="d-flex justify-content-center h-95">
+            <div class="user_card">
+                <div class="d-flex justify-content-center">
+                    <h3 id="form-title">LOGIN</h3>
+                </div>
+                <div class="d-flex justify-content-center form_container">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" name="username" placeholder="Username..." class="form-control">
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input type="password" name="password" placeholder="Password..." class="form-control">
+                        </div>
+                        <div class="d-flex justify-content-center mt-3 login_container">
+                            <input class="btn login_btn" type="submit" value="Login">
+                        </div>
+                    </form>
+                </div>
+                {% for message in messages %}
+                <p id="messages">{{ message }}</p>
+                {% endfor %}
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

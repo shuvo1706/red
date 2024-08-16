@@ -1,0 +1,190 @@
+{% extends "employees/home.html" %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+    <!-- Custom Styles -->
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #7abecc;
+            color: #333; /* Text color */
+        }
+        .btn-red {
+            background-color: #7393B3 !important; /* !important ensures that the style is applied */
+        }
+        .user_card {
+            width: 550px;
+            margin: auto;
+            margin-top: 20px;
+            background: #f8f9fa; /* Light gray background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #form-title {
+            background-color: #7393B3; /* Black background for title */
+            color: #fff; /* White text color */
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .form-row label {
+            width: 180px;
+            text-align: right;
+            margin-right: 10px;
+            color: #000; /* Black label text color */
+        }
+        .form-row textarea,
+        .form-row input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333; /* Text color for inputs */
+            background-color: #fff; /* White background for inputs */
+        }
+        .login-btn {
+            width: 40%;
+            background: #000; /* Black button */
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+        .login-btn:focus {
+            box-shadow: none;
+            outline: none;
+        }
+        /* Custom styles for the "Seek Permission from" textarea */
+        #seek {
+            height: 60px; /* Adjust height as needed */
+            resize: none; /* Disable resizing */
+            text-align: center; /* Center text */
+        }
+        /* Styles for the message */
+        .message {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+            <div class="col-lg-6">
+                <div class="user_card">
+                    <h3 id="form-title">Award</h3>
+                    <form action="{% url 'award' %}" method="post" class="form-container">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <h2 class="text-center">Search Employee</h2>
+                                <input type="text" id="searchInput" class="form-control" placeholder="name or enothi ID" onkeyup="searchEmployee()">
+                                <input type="hidden" id="employeeIdInput" name="employee">
+                                <ul id="employeeList" class="list-group mt-2"></ul>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="purpose">Purpose:</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="text" id="purpose" name="purpose" class="form-control" size="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description:</label><br>
+                            <textarea id="description" name="description" class="form-control" rows="4" cols="50"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="seek">Seek Permission from:</label><br>
+                            <div>
+                                [{{ advisor_object.enothi_id }}] - {{ advisor_object.ename }}- ({{ade}}-{{adi}})
+                            </div>
+                            <textarea id="seek" name="seek" style="display: none;">{{ advisor_object.enothi_id }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-dark login-btn btn-red" value="Submit">
+                            {% if messages %}
+                            <div class="message">
+                                {% for message in messages %}
+                                <p>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Your custom script -->
+    <script>
+        function searchEmployee() {
+            const query = document.getElementById('searchInput').value;
+            if (query.length < 3) {
+                document.getElementById('employeeList').innerHTML = '';
+                return;
+            }
+            fetch(`api/search-award/?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const employeeList = document.getElementById('employeeList');
+                    employeeList.innerHTML = '';
+                    data.employees.forEach(emp => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'list-group-item';
+                        listItem.innerHTML = `${emp.name} (${emp.enothi_id})`;
+                        listItem.onclick = () => selectEmployee(emp.name, emp.enothi_id);
+                        employeeList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error('Error searching employee:', error));
+        }
+
+        function selectEmployee(name, enothi_id) {
+            document.getElementById('searchInput').value =  name;
+            document.getElementById('employeeIdInput').value = enothi_id;
+            document.getElementById('employeeList').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
+
+{% endblock %}
