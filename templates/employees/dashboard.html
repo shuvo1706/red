@@ -276,7 +276,9 @@
 
         function saveAsPDF() {
             const { jsPDF } = window.jspdf;
+            
             const doc = new jsPDF('p', 'mm', 'a4');
+             
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(18);
             doc.text('Bangladesh Oil, Gas and Mineral Corporation', 40, 10);
