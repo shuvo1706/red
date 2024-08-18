@@ -10,6 +10,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
 
     <style>
+        /* Existing styles remain unchanged */
+        
         .dashboard-header {
             background-color: #E6E6FA; /* Adjust color as needed */
             padding: 10px;
@@ -81,6 +83,18 @@
         .suggestion-dropdown .list-group-item {
             cursor: pointer;
         }
+        #detailsButton {
+            background-color: #005B7F; /* Button background color */
+            color: #fff; /* Text color */
+            border: 1px solid #005B7F; /* Border color */
+            transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
+        }
+        #savePDFButton {
+            background-color: #005B7F; /* Button background color */
+            color: #fff; /* Text color */
+            border: 1px solid #005B7F; /* Border color */
+            transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
+        }
         
         .suggestion-dropdown .list-group-item:hover {
             background-color: #f8f9fa; /* Highlight on hover */
@@ -94,10 +108,19 @@
             display: flex;
             justify-content: center;
             margin-top: 1rem;
+            color:  #005B7F
         }
 
         .details-container button {
             margin-left: 1rem;
+        }
+
+        .alert-message {
+            display: none;
+            color: red;
+            font-weight: bold;
+            margin-top: 1rem;
+            text-align: center;
         }
     </style>
 </head>
@@ -118,8 +141,7 @@
                     </div>
                     <button id="detailsButton" class="btn btn-secondary ml-2" onclick="toggleDetails()">Details</button>
                 </div>
-                
-                <ul id="employeeList" class="suggestion-dropdown list-group mt-2"></ul>
+                <div id="alertMessage" class="alert-message">Please select an employee.</div>
             </div>
         </div>
 
@@ -248,7 +270,7 @@
                         labels: ['Own Department', 'Other Department'],
                         datasets: [{
                             data: [data.own_department, data.other_department],
-                            backgroundColor: ['#ffeb3b', '#8bc34a']
+                            backgroundColor: ['#4caf50', '#ffeb3b']
                         }]
                     },
                     options: {
@@ -351,14 +373,26 @@
         function toggleDetails() {
             const tableSection = document.getElementById('awardTableSection');
             const detailsButton = document.getElementById('detailsButton');
+            const alertMessage = document.getElementById('alertMessage');
 
-            // Toggle visibility
-            if (tableSection.style.display === 'none' || tableSection.style.display === '') {
-                tableSection.style.display = 'block';
-                detailsButton.textContent = 'Hide Details';
+            if (!selectedEmployeeName) {
+                // Show alert message
+                alertMessage.style.display = 'block';
+                setTimeout(() => {
+                    alertMessage.style.display = 'none';
+                }, 2000); // Hide after 2 seconds
             } else {
-                tableSection.style.display = 'none';
-                detailsButton.textContent = 'Details';
+                // Hide alert message if any
+                alertMessage.style.display = 'none';
+
+                // Toggle visibility of the table section
+                if (tableSection.style.display === 'none' || tableSection.style.display === '') {
+                    tableSection.style.display = 'block';
+                    detailsButton.textContent = 'Hide Details';
+                } else {
+                    tableSection.style.display = 'none';
+                    detailsButton.textContent = 'Details';
+                }
             }
         }
     </script>
