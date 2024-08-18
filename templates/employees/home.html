@@ -100,10 +100,10 @@
                     <a class="nav-link active" href="{% url 'select-evaluatee' %}">Evaluation</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'award' %}">Award</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'award' %}">Reward</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'awardreport' %}">Award Status</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'awardreport' %}">Reward Status</a>
                 </li>
                 {% endif %}
                 {% if request.user.username == '0001' or request.user.username == '0002' or request.user.username == '0003' %}
@@ -112,7 +112,7 @@
                         Dashboard
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dashboardDropdown">
-                        <li><a class="dropdown-item" href="{% url 'dashboard' %}">Award Report</a></li>
+                        <li><a class="dropdown-item" href="{% url 'dashboard' %}">Reward Report</a></li>
                         <li><a class="dropdown-item" href="{% url 'query' %}">Evaluation Report</a></li>
                     </ul>
                 </li>
