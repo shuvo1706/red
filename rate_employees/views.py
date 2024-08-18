@@ -1235,10 +1235,13 @@ def AwardReport(request):
                         'date':eval.created_date,
                         
                     })
+                print(current_user.edesignation)
                 
                 context = {
                     'report_data': finalawardreport,
-                    'employee_name':current_user.ename
+                    'employee_name':current_user.ename,
+                    'selectedEmployeeDesignation':current_user.edesignation,
+                    'selectedEmployeeDivision': current_user.edivision,
                 }
                 
                 return render(request, 'employees/awardreport.html', context)
