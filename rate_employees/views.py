@@ -266,6 +266,9 @@ def evaluate(request, emp_id):
 def showReport(request):
     current_user = User.objects.get(username=request.user.username)
     employeename=current_user.first_name
+
+
+
     if request.method == 'POST':
         print("Report Post method called")
         print(request.POST)
@@ -275,7 +278,9 @@ def showReport(request):
             context = {
                 'designationData': designations,
                 'employeeData': employees,
-                'employee_name':employeename
+                'employee_name':  employeename,
+
+                
             }
             return render(request,'employees/query.html',context)
         
@@ -315,14 +320,14 @@ def showReport(request):
                 print("Behavior Eval : ",petro.remarks[int(eval['behavEv'])-1][1])
 
                 final_report.append({
-                     'evaluatee': Employee.objects.filter(empid=eval['evaluateeid']).values()[0]['ename'],
-                     'evaluator': evaluator['ename'], 
-                     'division': evaluator['edivision'],  # Removed extra closing parenthesis
-                     'secDeptEval': petro.remarks[int(eval['secDeptEv'])-1][1],
-                     'comEval': petro.remarks[int(eval['commEv'])-1][1],
-                     'behavEval': petro.remarks[int(eval['behavEv'])-1][1],
-                     })
-
+                                  'evaluatee': Employee.objects.filter(empid = eval['evaluateeid']).values()[0]['ename'],
+                                  'evaluator': evaluator['ename'], 
+                                  'division': evaluator['edivision'],
+                                  'secDeptEval' : petro.remarks[int(eval['secDeptEv'])-1][1],
+                                  'comEval' : petro.remarks[int(eval['commEv'])-1][1],
+                                  'behavEval': petro.remarks[int(eval['behavEv'])-1][1],
+                                    }
+                                  )
             print("final Report")
             print(final_report)
 
@@ -394,6 +399,20 @@ def showReport(request):
             all_cat['Good'] += divisional_work['Good'] + committee_work['Good'] + behav_work['Good']
             all_cat['Average'] += divisional_work['Average'] + committee_work['Average'] + behav_work['Average']
 
+
+
+
+            print("change for chairman sir")
+            total_entities = all_cat['Excellent'] + all_cat['Very Good'] + all_cat['Good'] + all_cat['Average']
+            print(all_cat['Excellent'] + all_cat['Very Good'] + all_cat['Good'] + all_cat['Average'])
+            total_marks = all_cat['Excellent']*40 + all_cat['Very Good']*30 + all_cat['Good']*20 + all_cat['Average']*10
+            max_possible_marks = total_entities * 40
+            percentage = ((round(((total_marks / max_possible_marks) * 100),2)))
+            print(percentage)
+
+
+
+
             labels4 = list(all_cat.keys())
             data4 = list(all_cat.values())
 
@@ -444,9 +463,8 @@ def showReport(request):
     
             context = {
                 'evaluatee_name' :  evaluatee_name,
-                'evaluatee_designation' :evaluatee_designation,
-                'evaluatee_division' :evaluatee_division,
-                
+                'evaluatee_designation' : evaluatee_designation,
+                'evaluatee_division' : evaluatee_division,
                 'report_data': final_report,
                 'labels_json1': labels_json1,
                 'data_json1': data_json1,
@@ -460,7 +478,9 @@ def showReport(request):
                 'com_percent': com_percent,
                 'behave_percent': behave_percent,
                 'allcat_percent':allcat_percent,
-                'employee_name':employeename
+                'percentage':  percentage, 
+                'employee_name':  employeename,
+
                 }
             
 
@@ -502,29 +522,30 @@ def showReport(request):
                 print("Behavior Eval : ",petro.remarks[int(eval['behavEv'])-1][1])
 
                 final_report.append({
-                     'evaluatee': Employee.objects.filter(empid=eval['evaluateeid']).values()[0]['ename'],
-                     'evaluator': evaluator['ename'], 
-                     'division': evaluator['edivision'],  # Removed extra closing parenthesis
-                     'secDeptEval': petro.remarks[int(eval['secDeptEv'])-1][1],
-                     'comEval': petro.remarks[int(eval['commEv'])-1][1],
-                     'behavEval': petro.remarks[int(eval['behavEv'])-1][1],
-                     })
+                                  'evaluatee': Employee.objects.filter(empid = eval['evaluateeid']).values()[0]['ename'],
+                                  'evaluator': evaluator['ename'], 
+                                  'division': evaluator['edivision'],
+                                  'secDeptEval' : petro.remarks[int(eval['secDeptEv'])-1][1],
+                                  'comEval' : petro.remarks[int(eval['commEv'])-1][1],
+                                  'behavEval': petro.remarks[int(eval['behavEv'])-1][1],
+                                    }
+                                  )
             print("final Report")
             print(final_report)
 
 
 
             divisional_work = {
-                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0
+                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0, 'No Observation':0
             }
             committee_work = {
-                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0
+                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0, 'No Observation':0
             }
             behav_work = {
                     'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0
             }
             all_cat = {
-                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0
+                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0, 'No Observation':0
             }
 
             for eval in final_report:
@@ -583,6 +604,15 @@ def showReport(request):
 
             labels_json4 = json.dumps(labels4)
             data_json4 = json.dumps(data4)
+
+
+            print("change for chairman sir")
+            total_entities = all_cat['Excellent'] + all_cat['Very Good'] + all_cat['Good'] + all_cat['Average']
+            print(all_cat['Excellent'] + all_cat['Very Good'] + all_cat['Good'] + all_cat['Average'])
+            total_marks = all_cat['Excellent']*40 + all_cat['Very Good']*30 + all_cat['Good']*20 + all_cat['Average']*10
+            max_possible_marks = total_entities * 40
+            percentage = ((round(((total_marks / max_possible_marks) * 100),2)))
+            print(percentage)
 
 
             div_percent = []
@@ -644,7 +674,9 @@ def showReport(request):
                 'com_percent': com_percent,
                 'behave_percent': behave_percent,
                 'allcat_percent':allcat_percent,
-                'employee_name':employeename
+                'percentage':  percentage,
+                'employee_name':  employeename,
+
                 }
             
             return render(request,'employees/report.html',context)
@@ -683,29 +715,30 @@ def showReport(request):
                 print("Behavior Eval : ",petro.remarks[int(eval['behavEv'])-1][1])
 
                 final_report.append({
-                     'evaluatee': Employee.objects.filter(empid=eval['evaluateeid']).values()[0]['ename'],
-                     'evaluator': evaluator['ename'], 
-                     'division': evaluator['edivision'],  # Removed extra closing parenthesis
-                     'secDeptEval': petro.remarks[int(eval['secDeptEv'])-1][1],
-                     'comEval': petro.remarks[int(eval['commEv'])-1][1],
-                     'behavEval': petro.remarks[int(eval['behavEv'])-1][1],
-                     })
+                                  'evaluatee': Employee.objects.filter(empid = eval['evaluateeid']).values()[0]['ename'],
+                                  'evaluator': evaluator['ename'], 
+                                  'division': evaluator['edivision'],
+                                  'secDeptEval' : petro.remarks[int(eval['secDeptEv'])-1][1],
+                                  'comEval' : petro.remarks[int(eval['commEv'])-1][1],
+                                  'behavEval': petro.remarks[int(eval['behavEv'])-1][1],
+                                    }
+                                  )
             print("final Report")
             print(final_report)
 
 
 
             divisional_work = {
-                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0
+                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0, 'No Observation':0
             }
             committee_work = {
-                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0
+                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0, 'No Observation':0
             }
             behav_work = {
                     'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0
             }
             all_cat = {
-                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0
+                    'Excellent':0, 'Very Good':0, 'Good':0, 'Average':0, 'No Observation':0
             }
 
             for eval in final_report:
@@ -765,6 +798,13 @@ def showReport(request):
             labels_json4 = json.dumps(labels4)
             data_json4 = json.dumps(data4)
 
+            print("change for chairman sir")
+            total_entities = all_cat['Excellent'] + all_cat['Very Good'] + all_cat['Good'] + all_cat['Average']
+            print(all_cat['Excellent'] + all_cat['Very Good'] + all_cat['Good'] + all_cat['Average'])
+            total_marks = all_cat['Excellent']*40 + all_cat['Very Good']*30 + all_cat['Good']*20 + all_cat['Average']*10
+            max_possible_marks = total_entities * 40
+            percentage = ((round(((total_marks / max_possible_marks) * 100),2)))
+            print(percentage)
 
 
             div_percent = []
@@ -825,8 +865,10 @@ def showReport(request):
                 'com_percent': com_percent,
                 'behave_percent': behave_percent,
                 'allcat_percent':allcat_percent,
-                'employee_name':employeename
-            }
+                'percentage':  percentage,
+                'employee_name':  employeename
+
+                }
             
             return render(request,'employees/report.html',context)
         
@@ -835,18 +877,18 @@ def showReport(request):
         
         context = {
                 'report_data': final_report,
-                'employee_name':employeename
+                'employee_name':  employeename,
+
                 }
         return render(request,'employees/report.html',context)
     
     designations = Designation.objects.all()
     employees = Employee.objects.all()
-    current_user = User.objects.get(username=request.user.username)
-    employeename=current_user.first_name
     context = {
                 'designationData': designations,
                 'employeeData': employees,
-                'employee_name': employeename
+                'employee_name':  employeename,
+
             }
     return render(request,'employees/query.html',context)
 @login_required(login_url='login')

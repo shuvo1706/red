@@ -1,4 +1,4 @@
-{% extends "employees/home.html" %}
+{% extends "employees\home.html" %}
 
 {% block content %}
 
@@ -13,10 +13,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     
     <title>Evaluation</title>
    
@@ -92,7 +90,6 @@
             display: inline-block;
             width: 150px; /* Adjust width as needed for alignment */
         }
-      
 
 	</style>
     
@@ -126,140 +123,126 @@
                             <b>Designation </b>{{ evaluatee_designation }}<br>
                         </div>
                         <div class="profile-item">
-                            <b>Divisional Work </b>{{div_percent}}%<br>
-                        </div>
-                        <div class="profile-item">
-                            <b>Committee Work </b>{{com_percent}}%<br>
-                        </div>
-                        <div class="profile-item">
-                            <b>Overall Behavior </b>{{behave_percent}}%<br>
-                        </div>
-                        <div class="profile-item">
                             <b>Total Marks </b>{{percentage}}%<br>
-                        </div>
-
-                        <div class="d-flex justify-content-center">
-                            <button id="downloadPdf" class="login_btn" type="button">Download PDF</button>
-                            <button id="toggleDetails" class="login_btn" type="button" style="margin-left: 10px;">Details</button>
-                           
                         </div>
                         
                         <br><br>
 
-                        <div id="detailsSection" style="display: none;">
-
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col">
-                                        
-                                        <div style="width: 98%; margin: auto;">
-                                            Divisional Work
-                                            <canvas id="myPieChart1"></canvas>
-                                            <div id="chartName1" style="text-align: center; margin-top: 10px;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        Committee Work
-                                        <div style="width: 98%; margin: auto;">
-                                            <canvas id="myPieChart2"></canvas>
-                                            <div id="chartName2" style="text-align: center; margin-top: 10px;"></div>
-                                        </div>
-                                    </div>
-                                </div><br>
-                                <div class="row">
-                                    <div class="col">
-                                        Overall Behaviour
-                                        <div style="width: 98%; margin: auto;">
-                                            <canvas id="myPieChart3"></canvas>
-                                            <div id="chartName3" style="text-align: center; margin-top: 10px;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        All Categories
-                                        <div style="width: 98%; margin: auto;">
-                                            <canvas id="myPieChart4"></canvas>
-                                            <div id="chartName4" style="text-align: center; margin-top: 10px;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <br>
-                            <b>Percentage Calculation:</b>
-                            <table style="width:100%; text-align: center;">
+						<div class="container">
+							<div class="row">
+								<div class="col">
+									
+									<div style="width: 98%; margin: auto;">
+										Divisional Work
+										<canvas id="myPieChart1"></canvas>
+										<div id="chartName1" style="text-align: center; margin-top: 10px;"></div>
+									</div>
+								</div>
+								<div class="col">
+									Committee Work
+									<div style="width: 98%; margin: auto;">
+										<canvas id="myPieChart2"></canvas>
+										<div id="chartName2" style="text-align: center; margin-top: 10px;"></div>
+									</div>
+								</div>
+							</div><br>
+							<div class="row">
+								<div class="col">
+									Overall Behaviour
+									<div style="width: 98%; margin: auto;">
+										<canvas id="myPieChart3"></canvas>
+										<div id="chartName3" style="text-align: center; margin-top: 10px;"></div>
+									</div>
+								</div>
+								<div class="col">
+									All Categories
+									<div style="width: 98%; margin: auto;">
+										<canvas id="myPieChart4"></canvas>
+										<div id="chartName4" style="text-align: center; margin-top: 10px;"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<br>
+                        <b>Percentage Calculation:</b>
+                        <table style="width:100%; text-align: center;">
+                            <tr>
+                              
+                              <th style="width: 120px; text-align: center;">Categories</th>
+                              <th style="width: 120px; text-align: center;">Excellent <br>(%)</th>
+                              <th style="width: 120px; text-align: center;">Very Good <br> (%)</th>
+							  <th style="width: 70px; text-align: center;">Good (%)</th> 
+							  <th style="width: 70px; text-align: center;">Average (%)</th>
+                            </tr>
                                 <tr>
-                                  
-                                  <th style="width: 120px; text-align: center;">Categories</th>
-                                  <th style="width: 120px; text-align: center;">Excellent <br>(%)</th>
-                                  <th style="width: 120px; text-align: center;">Very Good <br> (%)</th>
-                                  <th style="width: 70px; text-align: center;">Good (%)</th> 
-                                  <th style="width: 70px; text-align: center;">Average (%)</th>
+                                    <td>Divisional Work</td>
+                                {% for dper in div_percent %}
+                                    <td>{{dper}}</td>
+                                
+                                {% endfor %}
                                 </tr>
-                                    <tr>
-                                        <td>Divisional Work</td>
-                                    {% for dper in div_percent %}
-                                        <td>{{dper}}</td>
-                                    
-                                    {% endfor %}
-                                    </tr>
-    
-                                    <tr>
-                                        <td>Committee Work</td>
-                                    {% for com in com_percent %}
-                                        <td>{{com}}</td>
-                                    
-                                    {% endfor %}
-                                    </tr>
-    
-                                    <tr>
-                                        <td>Overall Behaviour</td>
-                                    {% for behave in behave_percent %}
-                                        <td>{{behave}}</td>
-                                    {% endfor %}
-                                    </tr>
-    
-                                    <tr>
-                                        <td>All Categories</td>
-                                    {% for allcat in allcat_percent %}
-                                        <td>{{allcat}}</td>
-                                    {% endfor %}
-                                    </tr>
-    
-                               
-                              </table><br>
-                            <b>In Details:</b>
-                            <table style="width:100%; text-align: center;">
+
                                 <tr>
-                                  
-                                <!-- <th style="width: 120px; text-align: center;">Evaluator</th>  -->
-                                  <th style="width: 120px; text-align: center;">Counter</th>
-                                  <th style="width: 120px; text-align: center;">Evaluator's Division</th>
-                                  <th style="width: 70px; text-align: center;">Divisional Work</th>
-                                  <th style="width: 70px; text-align: center;">Committee Work</th> 
-                                  <th style="width: 70px; text-align: center;">Overall Behaviour</th>
+                                    <td>Committee Work</td>
+                                {% for com in com_percent %}
+                                    <td>{{com}}</td>
+                                
+                                {% endfor %}
+                                </tr>
+
+                                <tr>
+                                    <td>Overall Behaviour</td>
+                                {% for behave in behave_percent %}
+                                    <td>{{behave}}</td>
+                                {% endfor %}
+                                </tr>
+
+                                <tr>
+                                    <td>All Categories</td>
+                                {% for allcat in allcat_percent %}
+                                    <td>{{allcat}}</td>
+                                {% endfor %}
+                                </tr>
+
+                           
+                          </table><br>
+                        <b>In Details:</b>
+						<table style="width:100%; text-align: center;">
+                            <tr>
+                              
+                            <!-- <th style="width: 120px; text-align: center;">Evaluator</th> -->
+                              <th style="width: 120px; text-align: center;">Counter</th>
+                              <th style="width: 120px; text-align: center;">Evaluator's Division</th>
+                              <th style="width: 70px; text-align: center;">Divisional Work</th>
+							  <th style="width: 70px; text-align: center;">Committee Work</th> 
+							  <th style="width: 70px; text-align: center;">Overall Behaviour</th>
+                            </tr>
+                            
+                                {% for rep in report_data %}
+                                <tr>
+                                <!--<td>{{rep.evaluator}}</td>  -->
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{rep.division}}</td>
+                                    <td>{{rep.secDeptEval}}</td>
+                                    <td>{{rep.comEval}}</td>
+									<td>{{rep.behavEval}}</td>
                                 </tr>
                                 
-                                    {% for rep in report_data %}
-                                    <tr>
-                              
-                                    <!--<td>{{rep.evaluator}}</td> -->  
-                                        <td>{{forloop.counter}}</td>
-                                        <td>{{rep.division}}</td>
-                                        <td>{{rep.secDeptEval}}</td>
-                                        <td>{{rep.comEval}}</td>
-                                        <td>{{rep.behavEval}}</td>
-                                    </tr>
-                                    
-                                    {% endfor %}
-                                   
-                               
-                              </table>
-                            
-                        </div>
-						  <br>
+                                {% endfor %}
+
+                           
+                          </table>
+                          <br>
+                    
+                          
+                    
 					<div class="d-flex justify-content-center">
-                        
 						<input  class="login_btn" type="submit" name="profile" value="Back to Query">
-					</div>					
+                       
+					</div>
+
+
+					
 				</form>
                 </div>
                 
@@ -433,10 +416,6 @@
     });
 </script>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var ctx = document.getElementById('myPieChart4').getContext('2d');
@@ -489,57 +468,10 @@
 
     
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        document.getElementById('toggleDetails').addEventListener('click', function() {
-                var detailsSection = document.getElementById('detailsSection');
-                if (detailsSection.style.display === 'none') {
-                    detailsSection.style.display = 'block';
-                    this.textContent = 'Hide Details';
-                } else {
-                    detailsSection.style.display = 'none';
-                    this.textContent = 'Details';
-                }
-            });
-        document.getElementById('downloadPdf').addEventListener('click', function() {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-
-            // Add Title
-            pdf.setFontSize(18);
-			pdf.text('Bangladesh Oil, Gas and Mineral Corporation', 40, 10);
-			pdf.setFontSize(15);
-			pdf.text('Smart Employee Evaluation', 70, 18);
-			pdf.setFontSize(12);
-			pdf.text("Evaluation Report", 80, 26 );
-
-            // Add Content
-            pdf.setFontSize(10);
-            pdf.text(`Name                      ${"{{ evaluatee_name }}"}`, 70, 40);
-            pdf.text(`Division                   ${"{{ evaluatee_division }}"}`, 70, 50);
-			
-            pdf.text(`Designation             ${"{{ evaluatee_designation }}"}`, 70, 60);
-            pdf.text(`Divisional Work       ${"{{ div_percent }}"}`, 70, 70);
-            pdf.text(`Committee Work     ${"{{ com_percent }}"}`, 70, 80);
-            pdf.text(`Overall Behavior     ${"{{ behave_percent }}"}`, 70, 90);
-            pdf.text(`Total Marks             ${"{{ percentage }}%"}`, 70, 100);
-
-            // Add Footer
-            pdf.setFontSize(8);
-            pdf.text('Generated by IT Department, Petrobangla', 10, 280);
-
-            // Save the PDF
-            pdf.save('{{evaluatee_name}}.pdf');
-        });
-    });
-</script>
 
 
 
-
-
-
+    
     
     
     
@@ -549,4 +481,3 @@
 </html> 
 
 {% endblock %}
-

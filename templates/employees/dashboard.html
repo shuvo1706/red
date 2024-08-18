@@ -54,35 +54,50 @@
 
         .search-bar {
             width: 50%; /* Adjust the width as needed */
-            margin: 0 auto; /* Center the search bar */
+            margin-right: 1rem; /* Space between search bar and button */
             position: relative; /* Relative position for dropdown */
-            text-align: center; /* Center the text inside the search bar */
         }
-
+        
         .search-bar input {
+            width: 100%; /* Ensure input field takes the full width of the container */
             text-align: center; /* Center the placeholder and entered text */
             font-size: 16px; /* Increase font size for better readability */
         }
-
+        
         .suggestion-dropdown {
             position: absolute;
             top: 100%; /* Position below the input */
             left: 0;
-            width: 100%;
+            width: 100%; /* Match the width of the input field */
             max-height: 200px; /* Limit height */
             overflow-y: auto; /* Scroll if too many items */
             background-color: #fff; /* Dropdown background */
             border: 1px solid #ddd; /* Border around dropdown */
             border-radius: 5px; /* Rounded corners */
             z-index: 1000; /* Ensure dropdown appears on top */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
         }
-
+        
         .suggestion-dropdown .list-group-item {
             cursor: pointer;
         }
-
+        
         .suggestion-dropdown .list-group-item:hover {
             background-color: #f8f9fa; /* Highlight on hover */
+        }
+        
+        #awardTableSection {
+            display: none;
+        }
+
+        .details-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .details-container button {
+            margin-left: 1rem;
         }
     </style>
 </head>
@@ -91,80 +106,90 @@
     <div class="dashboard-header">
         <h1 class="text-center mb-4">Dashboard</h1>
     </div>
-
-    <!-- Search Employee -->
-    <div class="row mb-3">
-        <div class="col-md-12">
-            <h2 class="text-center">Search Employee</h2>
-            <div class="search-bar">
-                <input type="text" id="searchInput" class="form-control" placeholder="name or enothi ID" onkeyup="searchEmployee()">
+    <div class="content-wrapper" style="background-color: #ffffff; padding: 20px; border-radius: 5px;">
+        <!-- Search Employee -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <h2 class="text-center">Search Employee</h2>
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" class="form-control" placeholder="name or enothi ID" onkeyup="searchEmployee()">
+                        <ul id="employeeList" class="suggestion-dropdown list-group mt-2"></ul>
+                    </div>
+                    <button id="detailsButton" class="btn btn-secondary ml-2" onclick="toggleDetails()">Details</button>
+                </div>
+                
                 <ul id="employeeList" class="suggestion-dropdown list-group mt-2"></ul>
             </div>
         </div>
-    </div>
 
-    <!-- Award distribution Pie Chart -->
-    <div class="row mb-3">
-        <div class="col-md-12">
-            <h2 class="text-center">Award Distribution</h2>
-            <div class="chart-container">
-                <canvas id="awardDistributionChart"></canvas>
+        <!-- Award distribution Section -->
+        <div id="awardDistributionSection" class="row mb-3" style="display: none;">
+            <div class="col-md-12">
+                <h2 class="text-center">Award Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="awardDistributionChart"></canvas>
+                </div>
+                <div id="selectedEmployeeInfo" class="text-center mt-3"></div>
             </div>
-            <div id="selectedEmployeeInfo" class="text-center mt-3"></div>
+        </div>
+
+        <!-- Award Table and Save PDF Button -->
+        <div id="awardTableSection" style="display: none;">
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <h2 class="text-center">Award Table</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Evaluator</th>
+                                    <th scope="col" class="text-center">Evaluatee</th>
+                                    <th scope="col" class="text-center">Purpose</th>
+                                    <th scope="col" class="text-center">Description</th>
+                                    <th scope="col" class="text-center">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeAwardTableBody">
+                                <!-- Employee award data will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button id="savePDFButton" class="btn btn-primary" onclick="saveAsPDF()">Save as PDF</button>
+            </div>
         </div>
     </div>
 
-    <!-- Award Table -->
-    <div class="row mb-3">
-        <div class="col-md-12">
-            <h2 class="text-center">Award Table</h2>
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="text-center">Evaluator</th>
-                            <th scope="col" class="text-center">Evaluatee</th>
-                            <th scope="col" class="text-center">Purpose</th>
-                            <th scope="col" class="text-center">Description</th>
-                            <th scope="col" class="text-center">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="employeeAwardTableBody">
-                        <!-- Employee award data will be dynamically inserted here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="text-center mt-4">
-        <button class="btn btn-primary" onclick="saveAsPDF()">Save as PDF</button>
-    </div>
-    
     <!-- Top Employees Section -->
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="text-center mt-4">Employees with Most Awards</h2>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Employee Name</th>
-                            <th>Employee ID</th>
-                            <th>Total Awards</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for employee in top_employees %}
+    <div class="content-wrapper" style="background-color: #ffffff; padding: 20px; border-radius: 5px;">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-center mt-4">Employees with Most Awards</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ employee.employee_name }}</td>
-                                <td>{{ employee.employee_empid }}</td>
-                                <td>{{ employee.total_awards }}</td>
+                                <th>Rank</th>
+                                <th>Employee Name</th>
+                                <th>Employee ID</th>
+                                <th>Total Awards</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for employee in top_employees %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ employee.employee_name }}</td>
+                                    <td>{{ employee.employee_empid }}</td>
+                                    <td>{{ employee.total_awards }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -174,6 +199,7 @@
         let selectedEmployeeName = ''; 
         let selectedEmployeeDesignation = ''; 
         let selectedEmployeeDivision = ''; 
+
         function searchEmployee() {
             const query = document.getElementById('searchInput').value;
             if (query.length < 3) {
@@ -190,9 +216,9 @@
                     listItem.className = 'list-group-item';
                     listItem.innerHTML = `${emp.name} (${emp.enothi_id})`;
                     listItem.onclick = () => fetchEmployeeAwards(emp.enothi_id, emp.name);
-                    selectedEmployeeName=emp.name;
-                    selectedEmployeeDesignation =emp.designation;
-                    selectedEmployeeDivision=emp.division;
+                    selectedEmployeeName = emp.name;
+                    selectedEmployeeDesignation = emp.designation;
+                    selectedEmployeeDivision = emp.division;
 
                     employeeList.appendChild(listItem);
                 });
@@ -203,6 +229,9 @@
         function fetchEmployeeAwards(enothi_id, name) {
             document.getElementById('searchInput').value = `[${enothi_id}] ${name}`;
             document.getElementById('employeeList').innerHTML = '';
+
+            // Show the Award Distribution Section
+            document.getElementById('awardDistributionSection').style.display = 'block';
 
             fetch(`api/award_pie/${enothi_id}/`)
             .then(response => response.json())
@@ -219,7 +248,7 @@
                         labels: ['Own Department', 'Other Department'],
                         datasets: [{
                             data: [data.own_department, data.other_department],
-                            backgroundColor: ['#007bff', '#17a2b8']
+                            backgroundColor: ['#ffeb3b', '#8bc34a']
                         }]
                     },
                     options: {
@@ -286,12 +315,12 @@
             doc.text('Smart Employee Evaluation', 70, 18);
             doc.setFontSize(12);
             doc.text("Reward Report", 80, 26);
-        
+            
             doc.setFontSize(10);
             doc.text(`Name: ${selectedEmployeeName}`, 70, 40);
             doc.text(`Designation: ${selectedEmployeeDesignation}`, 70, 50);
             doc.text(`Division: ${selectedEmployeeDivision}`, 70, 60);
-        
+            
             // Add the Award Table
             doc.autoTable({
                 html: '.table-responsive table',
@@ -305,7 +334,7 @@
                 },
                 margin: { top: 20 },
             });
-        
+            
             // Add Footer
             const pageCount = doc.internal.getNumberOfPages();
             for (let i = 1; i <= pageCount; i++) {
@@ -314,10 +343,23 @@
                 doc.text(`Generated by IT Department, Petrobangla`, 10, 280);
                 doc.text(`Page ${i} of ${pageCount}`, 280, doc.internal.pageSize.height - 30, { align: 'right' });
             }
-        
+            
             // Save the PDF
             doc.save(`${selectedEmployeeName}.pdf`);
         }
+
+        function toggleDetails() {
+            const tableSection = document.getElementById('awardTableSection');
+            const detailsButton = document.getElementById('detailsButton');
+
+            // Toggle visibility
+            if (tableSection.style.display === 'none' || tableSection.style.display === '') {
+                tableSection.style.display = 'block';
+                detailsButton.textContent = 'Hide Details';
+            } else {
+                tableSection.style.display = 'none';
+                detailsButton.textContent = 'Details';
+            }
+        }
     </script>
-</div>
-{% endblock content %}
+{% endblock %}
