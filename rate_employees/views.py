@@ -1419,9 +1419,19 @@ def is_superuser(user):
 # Apply the user_passes_test decorator to your view
 @login_required(login_url='login')
 def dashboard(request):
+  
+    current_user = User.objects.get(username=request.user.username)
+    employeename=current_user.first_name
    
+        
 
-    return render(request, 'employees/dashboard.html')
+    context = {
+       
+        'employee_name':  employeename
+    }
+
+
+    return render(request, 'employees/dashboard.html',context)
 @login_required(login_url='login')
 def top_employees_view(request):
     start_date = request.GET.get('start_date')

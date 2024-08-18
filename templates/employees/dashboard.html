@@ -10,8 +10,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
 
     <style>
-        /* Existing styles remain unchanged */
-        
         .dashboard-header {
             background-color: #E6E6FA; /* Adjust color as needed */
             padding: 10px;
@@ -83,11 +81,45 @@
         .suggestion-dropdown .list-group-item {
             cursor: pointer;
         }
-        #detailsButton {
+        #filterButton, #detailsButton {
+            width: 120px; /* Set a specific width */
+            height: 40px; /* Set a specific height */
             background-color: #005B7F; /* Button background color */
             color: #fff; /* Text color */
             border: 1px solid #005B7F; /* Border color */
             transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
+            display: flex; /* Ensure button content is centered */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+        
+        .d-flex {
+            display: flex;
+            align-items: center; /* Align items vertically in the center */
+        }
+        
+        .form-group {
+            margin-bottom: 0; /* Remove bottom margin to align with buttons */
+        }
+        
+        #filterButton {
+            margin-left: 2rem; /* Space between date inputs and submit button */
+            margin-top:  2rem;
+        }
+        
+        /* Ensure alignment in the container */
+        .d-flex.justify-content-center {
+            align-items: center; /* Align items vertically in the center */
+        }
+        
+        .filterButton-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            color:  #005B7F
+        }
+
+
         }
         #savePDFButton {
             background-color: #005B7F; /* Button background color */
@@ -121,6 +153,10 @@
             font-weight: bold;
             margin-top: 1rem;
             text-align: center;
+        }
+
+        #topEmployeesSection {
+            display: none; /* Initially hide the top employees section */
         }
     </style>
 </head>
@@ -187,26 +223,28 @@
 <!-- Date Range Selection -->
 <div class="content-wrapper mt-4" style="background-color: #ffffff; padding: 20px; border-radius: 5px;">
     <div class="row mb-3">
-        <div class="col-md-12">
-            <h2 class="text-center">Filter Top Employees by Date Range</h2>
-            <div class="d-flex align-items-center justify-content-center">
-                <div class="form-group">
+        <div class="col-md-20">
+            <h2 class="text-center">Filter Top Employees by Date </h2>
+            <div class="d-flex justify-content-center">
+                <div class="form-group mr-3">
                     <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate" class="form-control">
+                    <input type="date" id="startDate" class="form-control" >
                 </div>
-                <div class="form-group ml-3">
+                <div class="form-group mx-3">
                     <label for="endDate">End Date:</label>
-                    <input type="date" id="endDate" class="form-control">
+                    <input type="date" id="endDate" class="form-control" >
                 </div>
-                <button id="filterButton" class="btn btn-secondary ml-3" onclick="fetchTopEmployees()">Submit</button>
+                <button id="filterButton" onclick="fetchTopEmployees()">Search</button>
             </div>
-            <div id="dateRangeAlert" class="alert-message">Please select a valid date range.</div>
+            <div id="dateRangeAlert" class="alert-message">Please select a valid date .</div>
         </div>
     </div>
+</div>
+
 
     <!-- Top Employees Section -->
-    <div id="topEmployeesSection" class="content-wrapper" style="background-color: #ffffff; padding: 20px; border-radius: 5px;">
-        <h2 class="text-center mt-4">Employees with Most Awards</h2>
+    <div id="topEmployeesSection" class="content-wrapper">
+        <h2 class="text-center mt-4">Employees with Most Rewards</h2>
         <div class="table-responsive">
             <table id="topEmployeesTable" class="table table-striped">
                 <thead>
@@ -214,7 +252,7 @@
                         <th>Rank</th>
                         <th>Employee Name</th>
                         <th>Employee ID</th>
-                        <th>Total Awards</th>
+                        <th> Rewards</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -225,7 +263,7 @@
     </div>
 </div>
 
-  
+
 
     <script>
         let employeeChart;  // To keep track of the employee chart instance
@@ -406,6 +444,7 @@
                 }
             }
         }
+
         function fetchTopEmployees() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
@@ -440,10 +479,9 @@
                     tableBody.appendChild(row);
                 });
         
-                topEmployeesSection.style.display = 'block';
+                topEmployeesSection.style.display = 'block'; // Show the top employees section
             })
             .catch(error => console.error('Error fetching top employees:', error));
         }
-        
     </script>
 {% endblock %}
