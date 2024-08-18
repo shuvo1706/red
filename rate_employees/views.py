@@ -1419,31 +1419,9 @@ def is_superuser(user):
 # Apply the user_passes_test decorator to your view
 @login_required(login_url='login')
 def dashboard(request):
-    top_employees = Award.objects.values('award_evaluateeid') \
-    .annotate(total_awards=Count('award_evaluateeid')) \
-    .order_by('-total_awards')[:5]
-    # Assuming you have an Employee model to fetch employee details
-    current_user = User.objects.get(username=request.user.username)
-    employeename=current_user.first_name
-    top_employees_details = []
-    for emp in top_employees:
-        employee = Employee.objects.get(enothi_id=emp['award_evaluateeid'])
-        top_employees_details.append({
-            'employee_name': employee.ename,
-            'employee_empid': employee.empid,
-            'total_awards': emp['total_awards']
-        })
-        
+   
 
-    context = {
-        'top_employees': top_employees_details,
-        'employee_name':  employeename
-    }
-    for employee in top_employees_details:
-       
-          print(employee['total_awards'])
-
-    return render(request, 'employees/dashboard.html',context)
+    return render(request, 'employees/dashboard.html')
 @login_required(login_url='login')
 def top_employees_view(request):
     start_date = request.GET.get('start_date')
@@ -1457,5 +1435,26 @@ def top_employees_view(request):
     data = {'top_employees': list(awards)}
     return JsonResponse(data)
 
-    
 
+def top_employees(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    # Query to get top 5 employees with most awards within the date range
+    awards = Award.objects.filter(created_date__range=[start_date, end_date]) \
+                .values('award_evaluateeid') \
+                .annotate(total_awards=Count('awardid')) \
+                .order_by('-total_awards')[:5]
+
+    # Prepare the response data with employee details
+    top_employees = []
+    for award in awards:
+        employee = Employee.objects.get(enothi_id=award['award_evaluateeid'])
+        top_employees.append({
+            'employee_name': employee.ename,
+            'employee_empid': employee.empid,
+            'total_awards': award['total_awards']
+        })
+
+    data = {'top_employees': top_employees}
+    return JsonResponse(data)
